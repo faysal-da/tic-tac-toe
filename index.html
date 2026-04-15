@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tic Tac Toe</h1>
+  <div id="game"></div>
+  <div id="status"></div>
+  <button onclick="restartGame()">Restart Game</button>
+
+  <script>
+    const game = document.getElementById('game');
+    const statusText = document.getElementById('status');
+
+    let board = Array(9).fill("");
+    let currentPlayer = "X";
+    let isGameActive = true;
+
+    const winningConditions = [
+      [0,1,2], [3,4,5], [6,7,8],
+      [0,3,6], [1,4,7], [2,5,8],
+      [0,4,8], [2,4,6]
+    ];
+
+    function createBoard() {
+      game.innerHTML = "";
+      board.forEach((_, index) => {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = index;
+        cell.addEventListener('click', handleCellClick);
+        game.appendChild(cell);
+      });
+      updateStatus();
+    }
+
+    function handleCellClick(e) {
+      const index = e.target.dataset.index;
+
+      if (board[index] !== "" || !isGameActive) return;
+
+      board[index] = currentPlayer;
+      e.target.textContent = currentPlayer;
+
+      if (checkWinner()) {
+        statusText.textContent = `Player ${currentPlayer} Wins! 🎉`;
+        isGameActive = false;
+        return;
+      }
+
+      if (!board.includes("")) {
+        statusText.textContent = "It's a Draw!";
+        isGameActive = false;
+        return;
+      }
+
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      updateStatus();
+    }
+
+    function checkWinner() {
+      return winningConditions.some(condition => {
+        const [a, b, c] = condition;
+        return board[a] && board[a] === board[b] && board[a] === board[c];
+      });
+    }
+
+    function updateStatus() {
+      statusText.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function restartGame() {
+      board = Array(9).fill("");
+      currentPlayer = "X";
+      isGameActive = true;
+      createBoard();
+    }
+
+    createBoard();
+  </script>
+
+</body>
+</html>
